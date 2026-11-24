@@ -11,7 +11,7 @@
 
   const control = document.querySelector(".sculpture-control");
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
-  const palette = ["#32724e", "#51a574", "#7fdf9e", "#b2ffbf", "#efffce"];
+  const palette = ["#ae596d", "#dc7580", "#ff9b86", "#ffc094", "#ffe7bd"];
   const particles = [];
   const fullTurn = Math.PI * 2;
   const introDuration = 3300;
