@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'none'; form-action 'none'; object-src 'none'"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8"><script src="bridge.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-submit {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-submit:hover {
+      background: #5568d3;
+    }
+
+    .btn-cancel {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-cancel:hover {
+      background: #5a6268;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .error {
+      display: none;
+      background: #f8d7da;
+      color: #721c24;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .success {
+      display: none;
+      background: #d4edda;
+      color: #155724;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .required {
+      color: #dc3545;
+    }
+
+    /* Barra de navegación (solo Web App) */
+    .navbar-web {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+      width: 100%;
+    }
+
+    .navbar-web a {
+      color: white;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 12px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.18);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .navbar-web a:hover {
+      background: rgba(255,255,255,0.35);
+    }
+
+    .navbar-web a.active {
+      background: #28a745;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar-web">
+    <a href="menu.html">🏠 Menú</a>
+    <a href="prestacion.html">📝 Prestación</a>
+    <a href="odontologo.html" class="active">👨‍⚕️ Odontólogo</a>
+    <a href="pagos.html">💰 Pagos</a>
+    <a href="reporte.html">📊 Reporte</a>
+  </nav>
+
+
+  <div class="container">
+    <h2>👨‍⚕️ Agregar Odontólogo</h2>
+
+    <div class="error" id="error"></div>
+    <div class="success" id="success"></div>
+
+    <form autocomplete="off" id="formulario">
+      <div class="form-group">
+        <label for="nombre">Nombre Completo <span class="required">*</span></label>
+        <input type="text" id="nombre" required placeholder="Ej: Juan Pérez">
+      </div>
+
+      <div class="buttons">
+        <button type="button" class="btn-cancel" onclick="cerrar()">Cancelar</button>
+        <button type="submit" class="btn-submit">Agregar</button>
+      </div>
+
+      <div class="loading" id="loading">
+        <p>Agregando...</p>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    window.onload = function() {
+      document.getElementById('formulario').addEventListener('submit', agregarOdontologo);
+    };
+
+    function agregarOdontologo(e) {
+      e.preventDefault();
+
+      mostrarLoading(true);
+      ocultarMensajes();
+
+      // Convertir nombre a mayúsculas
+      let nombre = document.getElementById('nombre').value.trim();
+      nombre = nombre.toUpperCase();
+
+      demoRun().withSuccessHandler(function(resultado) {
+        mostrarLoading(false);
+
+        if (resultado.exito) {
+          mostrarExito(resultado.mensaje);
+          document.getElementById('nombre').value = '';
+        } else {
+          mostrarError(resultado.mensaje);
+        }
+      }).withFailureHandler(function(error) {
+        mostrarLoading(false);
+        mostrarError('Error: ' + error.message);
+      }).agregarOdontologo(nombre);
+    }
+
+    function cerrar() {
+      // En Web App vuelve al menú; en diálogo de Sheets cierra el modal
+
+      window.location.href = 'menu.html';
+
+    }
+
+    function mostrarLoading(mostrar) {
+      document.getElementById('loading').style.display = mostrar ? 'block' : 'none';
+    }
+
+    function mostrarError(mensaje) {
+      const error = document.getElementById('error');
+      error.textContent = mensaje;
+      error.style.display = 'block';
+    }
+
+    function mostrarExito(mensaje) {
+      const success = document.getElementById('success');
+      success.textContent = mensaje;
+      success.style.display = 'block';
+    }
+
+    function ocultarMensajes() {
+      document.getElementById('error').style.display = 'none';
+      document.getElementById('success').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

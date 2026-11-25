@@ -1,0 +1,852 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'none'; form-action 'none'; object-src 'none'"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8"><script src="bridge.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    /* ============================================
+       BUSCADOR CON LISTA CUSTOM (combo buscable)
+       ============================================ */
+    .combo.disabled {
+      opacity: .55;
+      pointer-events: none;
+    }
+
+    .combo-search {
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .combo-search .combo-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      opacity: .5;
+      pointer-events: none;
+    }
+
+    .combo-search input {
+      width: 100%;
+      padding: 10px 12px 10px 36px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #f8f9fa;
+      transition: border-color .2s, box-shadow .2s, background .2s;
+    }
+
+    .combo-search input:focus {
+      outline: none;
+      border-color: #667eea;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, .15);
+    }
+
+    .combo-list {
+      max-height: 175px;
+      overflow-y: auto;
+      border: 1.5px solid #e2e2e8;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .combo-item {
+      padding: 9px 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #f2f2f6;
+      font-size: 13.5px;
+      color: #333;
+      transition: background .12s;
+    }
+
+    .combo-item:last-child {
+      border-bottom: none;
+    }
+
+    .combo-item:hover {
+      background: #f0f2fd;
+    }
+
+    .combo-item.selected {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .combo-label {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .combo-badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: #eef0fd;
+      color: #667eea;
+      border-radius: 10px;
+      padding: 2px 8px;
+      white-space: nowrap;
+    }
+
+    .combo-precio {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #28a745;
+      white-space: nowrap;
+    }
+
+    .combo-item.selected .combo-badge {
+      background: rgba(255,255,255,.22);
+      color: #fff;
+    }
+
+    .combo-item.selected .combo-precio {
+      color: #d9f7e6;
+    }
+
+    .combo-empty {
+      padding: 16px 12px;
+      text-align: center;
+      color: #999;
+      font-size: 13px;
+      font-style: italic;
+    }
+
+    .combo-count {
+      font-size: 11px;
+      color: #999;
+      margin-top: 4px;
+      padding-left: 4px;
+    }
+
+    /* Scrollbar fina y violeta */
+    .combo-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .combo-list::-webkit-scrollbar-track {
+      background: #f5f5f8;
+      border-radius: 4px;
+    }
+
+    .combo-list::-webkit-scrollbar-thumb {
+      background: #c9cdf2;
+      border-radius: 4px;
+    }
+
+    .combo-list::-webkit-scrollbar-thumb:hover {
+      background: #667eea;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .precio-display {
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #28a745;
+      text-align: center;
+    }
+
+    .coseguro-display {
+      background: #fff3cd;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #856404;
+      text-align: center;
+      border: 2px solid #ffc107;
+    }
+
+    .precio-b-toggle {
+      margin-top: 10px;
+    }
+
+    .descuento-display {
+      background: #d4edda;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #155724;
+      text-align: center;
+      border: 2px solid #28a745;
+      margin-top: 10px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.02);
+      }
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-submit {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-submit:hover {
+      background: #5568d3;
+    }
+
+    .btn-cancel {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-cancel:hover {
+      background: #5a6268;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .error {
+      display: none;
+      background: #f8d7da;
+      color: #721c24;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .success {
+      display: none;
+      background: #d4edda;
+      color: #155724;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .required {
+      color: #dc3545;
+    }
+
+    /* Barra de navegación (solo Web App) */
+    .navbar-web {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+
+    .navbar-web a {
+      color: white;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 12px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.18);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .navbar-web a:hover {
+      background: rgba(255,255,255,0.35);
+    }
+
+    .navbar-web a.active {
+      background: #28a745;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar-web">
+    <a href="menu.html" class="">🏠 Menú</a>
+    <a href="prestacion.html" class="active">📝 Prestación</a>
+    <a href="odontologo.html" class="">👨‍⚕️ Odontólogo</a>
+    <a href="pagos.html" class="">💰 Pagos</a>
+    <a href="reporte.html" class="">📊 Reporte</a>
+  </nav>
+
+
+  <div class="container">
+    <h2>📝 Nueva Prestación</h2>
+
+    <div class="error" id="error"></div>
+    <div class="success" id="success"></div>
+
+    <form autocomplete="off" id="formulario">
+      <div class="form-group">
+        <label for="fecha">📅 Fecha <span class="required">*</span></label>
+        <input type="date" id="fecha" required>
+      </div>
+
+      <div class="form-group">
+        <label for="odontologo">👨‍⚕️ Odontólogo <span class="required">*</span></label>
+        <select id="odontologo" required>
+          <option value="">Cargando...</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="paciente">👤 Paciente <span class="required">*</span></label>
+        <input type="text" id="paciente" required placeholder="Nombre completo">
+      </div>
+
+      <div class="form-group">
+        <label for="dni">🆔 DNI (opcional)</label>
+        <input type="number" id="dni" placeholder="Número de documento" min="1">
+      </div>
+
+      <div class="form-group">
+        <label>🏥 Obra Social <span class="required">*</span></label>
+        <div class="combo" id="comboObraSocial">
+          <div class="combo-search">
+            <span class="combo-icon">🔍</span>
+            <input type="text" id="busquedaObraSocial" placeholder="Buscar obra social..." autocomplete="off">
+          </div>
+          <div class="combo-list" id="listaObraSocial"></div>
+          <div class="combo-count" id="contadorObraSocial"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>⚕️ Prestación <span class="required">*</span></label>
+        <div class="combo disabled" id="comboPrestacion">
+          <div class="combo-search">
+            <span class="combo-icon">🔍</span>
+            <input type="text" id="busquedaPrestacion" placeholder="Buscar por código o nombre..." autocomplete="off" disabled>
+          </div>
+          <div class="combo-list" id="listaPrestacion"></div>
+          <div class="combo-count" id="contadorPrestacion"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>💲 Precio de la Prestación</label>
+        <div class="precio-display" id="precioDisplay">$0</div>
+        <div class="descuento-message" id="descuentoMessage" style="display: none;">
+          <div class="descuento-display">
+            🎉 <strong>¡10% DE DESCUENTO!</strong> (PARTICULAR + EFECTIVO)<br>
+            <span style="font-size: 14px;">Precio original: <span id="precioOriginal">$0</span> → Precio final: <span id="precioFinalDescuento">$0</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" id="coseguroGroup" style="display: none;">
+        <label id="labelCoseguro">🏥 Coseguro del Paciente</label>
+        <div class="coseguro-display" id="coseguroDisplay">$0</div>
+        <div class="coseguro-info" id="infoCoseguro" style="font-size: 12px; color: #666; margin-top: 5px;">
+          Esta prestación requiere coseguro del paciente
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="medioPago">💳 Medio de Pago <span class="required">*</span></label>
+        <select id="medioPago" required>
+          <option value="">Seleccione...</option>
+          <option value="Efectivo">Efectivo</option>
+          <option value="Transferencia">Transferencia</option>
+          <option value="Posnet">Posnet</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="observaciones">📝 Observaciones (opcional)</label>
+        <textarea id="observaciones" rows="3" placeholder="Notas adicionales..."></textarea>
+      </div>
+
+      <div class="buttons">
+        <button type="button" class="btn-cancel" onclick="cerrar()">Cancelar</button>
+        <button type="submit" class="btn-submit">Guardar Prestación</button>
+      </div>
+
+      <div class="loading" id="loading">
+        <p>Guardando...</p>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Variables globales
+    let obrasSociales = [];
+    let prestaciones = [];
+    let obraSeleccionada = null;
+    let prestacionSeleccionada = null;
+    let mensajePrestaciones = 'Seleccione primero la obra social';
+
+    // Al cargar la página
+    window.onload = function() {
+      // Establecer fecha de hoy
+      document.getElementById('fecha').valueAsDate = new Date();
+
+      // Cargar datos
+      cargarOdontologos();
+      cargarObrasSociales();
+
+      // Event listeners
+      document.getElementById('medioPago').addEventListener('change', verificarDescuento);
+      document.getElementById('formulario').addEventListener('submit', guardarPrestacion);
+      document.getElementById('busquedaObraSocial').addEventListener('input', renderListaObras);
+      document.getElementById('busquedaPrestacion').addEventListener('input', renderListaPrestaciones);
+    };
+
+    /**
+     * Normaliza texto para búsqueda: minúsculas y sin acentos
+     * ("Endodoncia" y "endodoncia" buscan igual)
+     */
+    function normalizarTexto(t) {
+      return (t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    }
+
+    /**
+     * Habilita/deshabilita el combo de prestación
+     */
+    function setComboPrestacionDisabled(disabled) {
+      document.getElementById('comboPrestacion').classList.toggle('disabled', disabled);
+      document.getElementById('busquedaPrestacion').disabled = disabled;
+    }
+
+    // ============================================
+    // COMBO: OBRAS SOCIALES
+    // ============================================
+
+    function renderListaObras() {
+      const contenedor = document.getElementById('listaObraSocial');
+      const filtro = document.getElementById('busquedaObraSocial').value.trim();
+      const texto = normalizarTexto(filtro);
+      contenedor.innerHTML = '';
+
+      const visibles = obrasSociales.filter(function(os) {
+        return texto === '' || normalizarTexto(os.nombre + ' ' + os.codigo).indexOf(texto) !== -1;
+      });
+
+      if (visibles.length === 0) {
+        const vacio = document.createElement('div');
+        vacio.className = 'combo-empty';
+        vacio.textContent = 'Sin resultados para "' + filtro + '"';
+        contenedor.appendChild(vacio);
+      } else {
+        visibles.forEach(function(os) {
+          const fila = document.createElement('div');
+          fila.className = 'combo-item' + (obraSeleccionada && obraSeleccionada.codigo === os.codigo ? ' selected' : '');
+
+          const label = document.createElement('span');
+          label.className = 'combo-label';
+          label.textContent = os.nombre;
+          fila.appendChild(label);
+
+          const badge = document.createElement('span');
+          badge.className = 'combo-badge';
+          badge.textContent = os.cantidad;
+          badge.title = os.cantidad + ' prácticas';
+          fila.appendChild(badge);
+
+          fila.addEventListener('click', function() {
+            seleccionarObraSocial(os.codigo);
+          });
+          contenedor.appendChild(fila);
+        });
+      }
+
+      document.getElementById('contadorObraSocial').textContent =
+        visibles.length + (visibles.length === 1 ? ' obra' : ' obras');
+    }
+
+    function seleccionarObraSocial(codigo) {
+      obraSeleccionada = obrasSociales.find(function(o) { return o.codigo === codigo; }) || null;
+      renderListaObras();
+      onObraSocialChange();
+    }
+
+    // ============================================
+    // COMBO: PRESTACIONES
+    // ============================================
+
+    function renderListaPrestaciones() {
+      const contenedor = document.getElementById('listaPrestacion');
+      const filtro = document.getElementById('busquedaPrestacion').value.trim();
+      const texto = normalizarTexto(filtro);
+      contenedor.innerHTML = '';
+
+      if (prestaciones.length === 0) {
+        const vacio = document.createElement('div');
+        vacio.className = 'combo-empty';
+        vacio.textContent = mensajePrestaciones;
+        contenedor.appendChild(vacio);
+        document.getElementById('contadorPrestacion').textContent = '';
+        return;
+      }
+
+      const visibles = prestaciones.filter(function(p) {
+        return texto === '' || normalizarTexto(p.codigo + ' ' + p.nombre).indexOf(texto) !== -1;
+      });
+
+      if (visibles.length === 0) {
+        const vacio = document.createElement('div');
+        vacio.className = 'combo-empty';
+        vacio.textContent = 'Sin resultados para "' + filtro + '"';
+        contenedor.appendChild(vacio);
+      } else {
+        visibles.forEach(function(p) {
+          const fila = document.createElement('div');
+          fila.className = 'combo-item' + (prestacionSeleccionada && prestacionSeleccionada.codigo === p.codigo ? ' selected' : '');
+
+          const label = document.createElement('span');
+          label.className = 'combo-label';
+          label.textContent = p.codigo + ' - ' + p.nombre;
+          fila.appendChild(label);
+
+          const precio = document.createElement('span');
+          precio.className = 'combo-precio';
+          precio.textContent = '$' + Number(p.precio || 0).toLocaleString('es-AR');
+          fila.appendChild(precio);
+
+          fila.addEventListener('click', function() {
+            seleccionarPrestacion(p.codigo);
+          });
+          contenedor.appendChild(fila);
+        });
+      }
+
+      document.getElementById('contadorPrestacion').textContent =
+        visibles.length + (visibles.length === 1 ? ' prestación' : ' prestaciones');
+    }
+
+    function seleccionarPrestacion(codigo) {
+      prestacionSeleccionada = prestaciones.find(function(p) { return p.codigo === codigo; }) || null;
+      renderListaPrestaciones();
+      onPrestacionChange();
+    }
+
+    function cargarOdontologos() {
+      demoRun().withSuccessHandler(function(odontologos) {
+        const select = document.getElementById('odontologo');
+        select.innerHTML = '<option value="">Seleccione...</option>';
+
+        odontologos.forEach(function(odontologo) {
+          const option = document.createElement('option');
+          option.value = odontologo;
+          option.textContent = odontologo;
+          select.appendChild(option);
+        });
+      }).obtenerOdontologos();
+    }
+
+    function cargarObrasSociales() {
+      demoRun().withSuccessHandler(function(obrasSocialesData) {
+        obrasSociales = obrasSocialesData;
+        renderListaObras();
+      }).obtenerObrasSociales();
+    }
+
+    function onObraSocialChange() {
+      const obraSocial = obraSeleccionada ? obraSeleccionada.codigo : '';
+
+      // Reset del combo de prestaciones al cambiar de obra social
+      prestacionSeleccionada = null;
+      prestaciones = [];
+      document.getElementById('busquedaPrestacion').value = '';
+      document.getElementById('precioDisplay').textContent = '$0';
+      document.getElementById('coseguroGroup').style.display = 'none';
+      document.getElementById('descuentoMessage').style.display = 'none';
+
+      if (!obraSocial) {
+        mensajePrestaciones = 'Seleccione primero la obra social';
+        setComboPrestacionDisabled(true);
+        renderListaPrestaciones();
+        return;
+      }
+
+      mensajePrestaciones = 'Cargando...';
+      setComboPrestacionDisabled(false);
+      renderListaPrestaciones();
+
+      demoRun().withSuccessHandler(function(prestacionesData) {
+        prestaciones = prestacionesData;
+        mensajePrestaciones = '';
+        renderListaPrestaciones();
+      }).obtenerPrestacionesPorObraSocial(obraSocial);
+    }
+
+    function onPrestacionChange() {
+      if (!prestacionSeleccionada) {
+        document.getElementById('precioDisplay').textContent = '$0';
+        document.getElementById('coseguroDisplay').textContent = '$0';
+        document.getElementById('coseguroGroup').style.display = 'none';
+        return;
+      }
+
+      const precio = prestacionSeleccionada.precio || 0;
+      const precioB = prestacionSeleccionada.precioB || 0;
+
+      // Mostrar precio de la prestación
+      document.getElementById('precioDisplay').textContent = '$' + Number(precio).toLocaleString('es-AR');
+
+      // Mostrar coseguro (positivo) o gasto de laboratorio (negativo)
+      const coseguroGroup = document.getElementById('coseguroGroup');
+      const coseguroNum = Number(precioB) || 0;
+      const labelCoseguro = document.getElementById('labelCoseguro');
+      const infoCoseguro = document.getElementById('infoCoseguro');
+
+      if (coseguroNum > 0) {
+        // Coseguro positivo: lo paga el paciente (obras sociales)
+        coseguroGroup.style.display = 'block';
+        labelCoseguro.textContent = '🏥 Coseguro del Paciente';
+        infoCoseguro.textContent = 'Esta prestación requiere coseguro del paciente';
+        document.getElementById('coseguroDisplay').textContent = '$' + coseguroNum.toLocaleString('es-AR');
+      } else if (coseguroNum < 0) {
+        // Gasto negativo: costo de laboratorio (particulares)
+        coseguroGroup.style.display = 'block';
+        labelCoseguro.textContent = '🔧 Gasto de Laboratorio';
+        infoCoseguro.textContent = 'Costo de laboratorio (se descuenta del precio al liquidar)';
+        document.getElementById('coseguroDisplay').textContent = '$' + Math.abs(coseguroNum).toLocaleString('es-AR');
+      } else {
+        coseguroGroup.style.display = 'none';
+        document.getElementById('coseguroDisplay').textContent = '$0';
+      }
+
+      // Verificar si aplica descuento (PARTICULAR + EFECTIVO)
+      verificarDescuento();
+    }
+
+    function verificarDescuento() {
+      const obraSocial = obraSeleccionada ? obraSeleccionada.codigo : '';
+      const medioPago = document.getElementById('medioPago').value;
+
+      if (!prestacionSeleccionada) return;
+
+      const precio = Number(prestacionSeleccionada.precio) || 0;
+      const descuentoMessage = document.getElementById('descuentoMessage');
+
+      // Verificar si es algún PARTICULAR + EFECTIVO
+      if (obraSocial.indexOf('PARTICULAR') !== -1 && medioPago === 'Efectivo' && precio > 0) {
+        const precioOriginal = precio;
+        const descuento = precio * 0.10;
+        const precioFinal = precio - descuento;
+
+        // Mostrar mensaje de descuento
+        descuentoMessage.style.display = 'block';
+        document.getElementById('precioOriginal').textContent = '$' + precioOriginal.toLocaleString('es-AR');
+        document.getElementById('precioFinalDescuento').textContent = '$' + precioFinal.toLocaleString('es-AR');
+
+        // Actualizar precio principal mostrado
+        document.getElementById('precioDisplay').textContent = '$' + precioFinal.toLocaleString('es-AR') + ' (con 10% OFF)';
+      } else {
+        // Ocultar mensaje de descuento
+        descuentoMessage.style.display = 'none';
+
+        // Mostrar precio normal
+        if (precio > 0) {
+          document.getElementById('precioDisplay').textContent = '$' + precio.toLocaleString('es-AR');
+        }
+      }
+    }
+
+    function guardarPrestacion(e) {
+      e.preventDefault();
+
+      mostrarLoading(true);
+      ocultarMensajes();
+
+      // Capitalizar cada palabra del paciente (nombre y apellido)
+      let paciente = document.getElementById('paciente').value.trim();
+      paciente = paciente.split(' ').map(function(palabra) {
+        if (palabra.length === 0) return '';
+        return palabra.charAt(0).toUpperCase() + palabra.slice(1).toLowerCase();
+      }).join(' ');
+
+      // Validar DNI (con min="1" en el input ya no permite negativos)
+      const dni = document.getElementById('dni').value;
+      const dniNum = parseInt(dni);
+      if (dni && (dniNum <= 0 || isNaN(dniNum))) {
+        mostrarLoading(false);
+        mostrarError('El DNI debe ser un número positivo mayor a 0');
+        return;
+      }
+
+      // Odontólogo siempre en mayúsculas
+      let odontologo = document.getElementById('odontologo').value.trim();
+      odontologo = odontologo.toUpperCase();
+
+      // Validar selección de obra social y prestación (combo custom)
+      if (!obraSeleccionada) {
+        mostrarLoading(false);
+        mostrarError('Seleccione una obra social');
+        return;
+      }
+      if (!prestacionSeleccionada) {
+        mostrarLoading(false);
+        mostrarError('Seleccione una prestación');
+        return;
+      }
+
+      const datos = {
+        fechaAtencion: document.getElementById('fecha').value,
+        odontologo: odontologo,
+        paciente: paciente,
+        dni: dni,
+        obraSocial: obraSeleccionada.codigo,
+        prestacion: prestacionSeleccionada.codigo,
+        medioPago: document.getElementById('medioPago').value,
+        observaciones: document.getElementById('observaciones').value
+      };
+
+      demoRun().withSuccessHandler(function(resultado) {
+        mostrarLoading(false);
+
+        if (resultado.exito) {
+          mostrarExito(resultado.mensaje);
+          limpiarFormulario();
+        } else {
+          mostrarError(resultado.mensaje);
+        }
+      }).withFailureHandler(function(error) {
+        mostrarLoading(false);
+        mostrarError('Error: ' + error.message);
+      }).guardarPrestacion(datos);
+    }
+
+    function limpiarFormulario() {
+      document.getElementById('paciente').value = '';
+      document.getElementById('dni').value = '';
+      // Reset de los combos custom
+      obraSeleccionada = null;
+      prestacionSeleccionada = null;
+      prestaciones = [];
+      mensajePrestaciones = 'Seleccione primero la obra social';
+      document.getElementById('busquedaObraSocial').value = '';
+      document.getElementById('busquedaPrestacion').value = '';
+      renderListaObras();
+      renderListaPrestaciones();
+      setComboPrestacionDisabled(true);
+      document.getElementById('medioPago').value = '';
+      document.getElementById('observaciones').value = '';
+      document.getElementById('precioDisplay').textContent = '$0';
+      document.getElementById('coseguroGroup').style.display = 'none';
+      document.getElementById('coseguroDisplay').textContent = '$0';
+      document.getElementById('descuentoMessage').style.display = 'none'; // ✅ Ocultar mensaje de descuento
+      document.getElementById('fecha').valueAsDate = new Date();
+    }
+
+    function cerrar() {
+      // En Web App vuelve al menú; en diálogo de Sheets cierra el modal
+
+      window.location.href = 'menu.html';
+
+    }
+
+    function mostrarLoading(mostrar) {
+      document.getElementById('loading').style.display = mostrar ? 'block' : 'none';
+    }
+
+    function mostrarError(mensaje) {
+      const error = document.getElementById('error');
+      error.textContent = mensaje;
+      error.style.display = 'block';
+    }
+
+    function mostrarExito(mensaje) {
+      const success = document.getElementById('success');
+      success.textContent = mensaje;
+      success.style.display = 'block';
+    }
+
+    function ocultarMensajes() {
+      document.getElementById('error').style.display = 'none';
+      document.getElementById('success').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

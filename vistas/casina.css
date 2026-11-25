@@ -1,0 +1,13 @@
+﻿* { box-sizing: border-box; }
+body { margin: 0; background: #f5f2ea; color: #201e1a; font: 1rem/1.5 system-ui, sans-serif; }
+header, main { width: min(100% - 2rem, 76rem); margin-inline: auto; }
+header { display: flex; align-items: center; justify-content: space-between; padding-block: 1rem; border-bottom: 1px solid #d2cbc0; }
+a { color: inherit; text-underline-offset: .2em; }
+button { cursor: pointer; padding: .5rem .75rem; border: 1px solid #aaa398; border-radius: .4rem; background: transparent; color: inherit; }
+main { padding-block: clamp(2rem, 5vw, 4rem); }
+h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.75rem); letter-spacing: -.05em; line-height: 1.1; }
+p { max-width: 65ch; color: #58534b; }
+section { margin-top: 2.5rem; }
+h2 { font-size: 1.25rem; }
+.capture { display: block; overflow: hidden; border: 1px solid #d2cbc0; border-radius: .75rem; cursor: zoom-in; }
+img { display: block; width: 100%; height: auto; }

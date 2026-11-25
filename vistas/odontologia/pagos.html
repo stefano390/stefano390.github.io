@@ -1,0 +1,698 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'none'; form-action 'none'; object-src 'none'">
+  <meta charset="utf-8"><script src="bridge.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      padding: 10px;
+      font-size: 13px;
+      overflow-y: auto;
+      max-height: 100vh;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 18px;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .header p {
+      font-size: 12px;
+      opacity: 0.95;
+      margin: 0;
+    }
+
+    .filters {
+      background: white;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .filter-group {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .filter-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #333;
+      font-size: 12px;
+    }
+
+    .filter-group select,
+    .filter-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 8px;
+    }
+
+    button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-filter {
+      background: #2196F3;
+      color: white;
+    }
+
+    .btn-filter:hover {
+      background: #0b7dda;
+    }
+
+    .btn-clear {
+      background: #f44336;
+      color: white;
+    }
+
+    .btn-clear:hover {
+      background: #da190b;
+    }
+
+    .btn-save {
+      background: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+    }
+
+    .btn-save:hover {
+      background: #45a049;
+    }
+
+    /* Barra de navegación (solo Web App) */
+    .navbar-web {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .navbar-web a {
+      color: #667eea;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 12px;
+      border-radius: 20px;
+      background: #eef0fd;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .navbar-web a:hover {
+      background: #dfe3fb;
+    }
+
+    .navbar-web a.active {
+      background: #4CAF50;
+      color: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .results {
+      background: white;
+      padding: 10px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .results-count {
+      font-size: 12px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .results-total {
+      font-size: 12px;
+      font-weight: 600;
+      color: #4CAF50;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      margin-bottom: 10px;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    thead {
+      background: #f8f9fa;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    th {
+      padding: 8px 6px;
+      text-align: left;
+      font-weight: 600;
+      color: #333;
+      border-bottom: 2px solid #dee2e6;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 8px 6px;
+      border-bottom: 1px solid #dee2e6;
+      font-size: 11px;
+    }
+
+    tr:hover {
+      background: #f8f9fa;
+    }
+
+    .checkbox {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .price {
+      font-weight: 600;
+      color: #4CAF50;
+      white-space: nowrap;
+      font-size: 11px;
+    }
+
+    .date {
+      color: #666;
+      white-space: nowrap;
+      font-size: 10px;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-size: 9px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 30px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 30px;
+      color: #999;
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
+    .select-all-container {
+      margin-bottom: 8px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+    }
+
+    .select-all {
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+      body {
+        padding: 8px;
+        font-size: 12px;
+      }
+
+      .header {
+        padding: 10px;
+        margin-bottom: 8px;
+      }
+
+      .header h1 {
+        font-size: 16px;
+      }
+
+      .header p {
+        font-size: 11px;
+      }
+
+      .filters {
+        padding: 10px;
+        margin-bottom: 8px;
+      }
+
+      .filter-group {
+        min-width: 100%;
+        margin-bottom: 5px;
+      }
+
+      .filter-buttons {
+        flex-direction: row;
+        gap: 5px;
+      }
+
+      .filter-buttons button {
+        flex: 1;
+        padding: 8px 12px;
+        font-size: 11px;
+      }
+
+      .results {
+        padding: 8px;
+      }
+
+      .results-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        margin-bottom: 6px;
+      }
+
+      .results-count, .results-total {
+        font-size: 11px;
+      }
+
+      .table-container {
+        max-height: 300px;
+      }
+
+      table {
+        font-size: 10px;
+      }
+
+      th, td {
+        padding: 6px 4px;
+        font-size: 10px;
+      }
+
+      .actions {
+        justify-content: stretch;
+      }
+
+      .actions button {
+        width: 100%;
+        padding: 10px 16px;
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .filter-row {
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .filter-group {
+        width: 100%;
+      }
+
+      .hide-mobile {
+        display: none;
+      }
+
+      table {
+        font-size: 14px;
+      }
+
+      th, td {
+        padding: 8px;
+        font-size: 14px;
+      }
+
+      .checkbox {
+        width: 24px;
+        height: 24px;
+      }
+
+      .status-pending {
+        font-size: 12px;
+        padding: 3px 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar-web">
+    <a href="menu.html">🏠 Menú</a>
+    <a href="prestacion.html">📝 Prestación</a>
+    <a href="odontologo.html">👨‍⚕️ Odontólogo</a>
+    <a href="pagos.html" class="active">💰 Pagos</a>
+    <a href="reporte.html">📊 Reporte</a>
+  </nav>
+
+
+  <div class="header">
+    <h1>💰 Cargar Pagos a Odontólogos</h1>
+    <p>Seleccione las prestaciones pendientes y márquelas como pagadas</p>
+  </div>
+
+  <div class="filters">
+    <div class="filter-row">
+      <div class="filter-group">
+        <label>Odontólogo:</label>
+        <select id="filtroOdontologo">
+          <option value="">Todos</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Obra Social:</label>
+        <select id="filtroObraSocial">
+          <option value="">Todas</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Fecha Desde:</label>
+        <input type="date" id="fechaDesde">
+      </div>
+
+      <div class="filter-group">
+        <label>Fecha Hasta:</label>
+        <input type="date" id="fechaHasta">
+      </div>
+    </div>
+
+    <div class="filter-buttons">
+      <button class="btn-clear" onclick="limpiarFiltros()">Limpiar Filtros</button>
+      <button class="btn-filter" onclick="aplicarFiltros()">Aplicar Filtros</button>
+    </div>
+  </div>
+
+  <div class="results">
+    <div class="results-header">
+      <div class="results-count">
+        Prestaciones pendientes: <span id="countPendientes">0</span>
+      </div>
+      <div class="results-total">
+        Total a pagar: <span id="totalPagar">$0</span>
+      </div>
+    </div>
+
+    <div class="select-all-container">
+      <input type="checkbox" class="select-all" id="selectAll" onchange="toggleSelectAll()">
+      <label for="selectAll">Seleccionar todas</label>
+    </div>
+
+    <div id="loadingContainer" class="loading" style="display: none;">
+      Cargando prestaciones pendientes...
+    </div>
+
+    <div id="noResultsContainer" class="no-results" style="display: none;">
+      No hay prestaciones pendientes que coincidan con los filtros
+    </div>
+
+    <div class="table-container" id="tableContainer">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Fecha</th>
+            <th>Odontólogo</th>
+            <th>Paciente</th>
+            <th class="hide-mobile">DNI</th>
+            <th>Obra Social</th>
+            <th>Prestación</th>
+            <th class="hide-mobile">Código</th>
+            <th>Precio</th>
+            <th>Coseguro</th>
+            <th>Comisión</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="tablaPrestaciones">
+        </tbody>
+      </table>
+    </div>
+
+    <div class="actions">
+      <button class="btn-save" onclick="marcarComoPagadas()">💾 Marcar Seleccionadas como Pagadas</button>
+    </div>
+
+
+
+
+  </div>
+
+  <script>
+    let prestaciones = [];
+    let prestacionesFiltradas = [];
+
+    // Cargar datos al iniciar
+    window.onload = function() {
+      cargarDatos();
+    };
+
+    function cargarDatos() {
+      showLoading(true);
+
+      demoRun()
+        .withSuccessHandler(function(data) {
+          prestaciones = data;
+          prestacionesFiltradas = data;
+
+          // Cargar filtros
+          cargarFiltros();
+
+          // Mostrar resultados
+          mostrarResultados();
+          showLoading(false);
+        })
+        .withFailureHandler(function(error) {
+          alert('Error al cargar prestaciones: ' + error.message);
+          showLoading(false);
+        })
+        .obtenerPrestacionesPendientes();
+    }
+
+    function cargarFiltros() {
+      // Cargar odontólogos únicos
+      const odontologos = [...new Set(prestaciones.map(p => p.odontologo))].sort();
+      const selectOdontologo = document.getElementById('filtroOdontologo');
+      selectOdontologo.innerHTML = '<option value="">Todos</option>';
+      odontologos.forEach(function(odontologo) {
+        const option = document.createElement('option');
+        option.value = odontologo;
+        option.textContent = odontologo;
+        selectOdontologo.appendChild(option);
+      });
+
+      // Cargar obras sociales únicas
+      const obrasSociales = [...new Set(prestaciones.map(p => p.obraSocial))].sort();
+      const selectObraSocial = document.getElementById('filtroObraSocial');
+      selectObraSocial.innerHTML = '<option value="">Todas</option>';
+      obrasSociales.forEach(function(os) {
+        const option = document.createElement('option');
+        option.value = os;
+        option.textContent = os;
+        selectObraSocial.appendChild(option);
+      });
+    }
+
+    function aplicarFiltros() {
+      const odontologo = document.getElementById('filtroOdontologo').value;
+      const obraSocial = document.getElementById('filtroObraSocial').value;
+      const fechaDesde = document.getElementById('fechaDesde').value;
+      const fechaHasta = document.getElementById('fechaHasta').value;
+
+      prestacionesFiltradas = prestaciones.filter(function(p) {
+        if (odontologo && p.odontologo !== odontologo) return false;
+        if (obraSocial && p.obraSocial !== obraSocial) return false;
+
+        // Convertir fecha de dd/MM/yyyy a YYYY-MM-DD para comparar
+        if (p.fecha) {
+          const partes = p.fecha.split('/');
+          if (partes.length === 3) {
+            const fechaPrestacion = partes[2] + '-' + partes[1].padStart(2, '0') + '-' + partes[0].padStart(2, '0');
+
+            if (fechaDesde && fechaPrestacion < fechaDesde) return false;
+            if (fechaHasta && fechaPrestacion > fechaHasta) return false;
+          }
+        }
+
+        return true;
+      });
+
+      mostrarResultados();
+    }
+
+    function limpiarFiltros() {
+      document.getElementById('filtroOdontologo').value = "";
+      document.getElementById('filtroObraSocial').value = "";
+      document.getElementById('fechaDesde').value = "";
+      document.getElementById('fechaHasta').value = "";
+      prestacionesFiltradas = prestaciones;
+      mostrarResultados();
+    }
+
+    function mostrarResultados() {
+      const tbody = document.getElementById('tablaPrestaciones');
+      tbody.innerHTML = '';
+
+      if (prestacionesFiltradas.length === 0) {
+        document.getElementById('tableContainer').style.display = 'none';
+        document.getElementById('noResultsContainer').style.display = 'block';
+        document.getElementById('countPendientes').textContent = '0';
+        document.getElementById('totalPagar').textContent = '$0';
+        return;
+      }
+
+      document.getElementById('tableContainer').style.display = 'block';
+      document.getElementById('noResultsContainer').style.display = 'none';
+
+      let total = 0;
+
+      prestacionesFiltradas.forEach(function(p) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input type="checkbox" class="checkbox prestacion-checkbox" data-fila="${p.fila}"></td>
+          <td class="date">${p.fecha}</td>
+          <td>${escapeCell(p.odontologo)}</td>
+          <td>${escapeCell(p.paciente)}</td>
+          <td class="hide-mobile">${escapeCell(p.dni)}</td>
+          <td>${p.obraSocial}</td>
+          <td>${p.prestacion}</td>
+          <td class="hide-mobile">${p.codigo}</td>
+          <td class="price">${formatearPrecio(p.precio)}</td>
+          <td class="price">${p.coseguro < 0 ? 'Gasto: $' + formatearPrecio(Math.abs(p.coseguro)).replace('$', '') : formatearPrecio(p.coseguro)}</td>
+          <td class="price">${formatearPrecio(p.comision)}</td>
+          <td><span class="status-pending">Pendiente</span></td>
+        `;
+        tbody.appendChild(tr);
+
+        total += parseFloat(p.comision) || 0;
+      });
+
+      document.getElementById('countPendientes').textContent = prestacionesFiltradas.length;
+      document.getElementById('totalPagar').textContent = formatearPrecio(total);
+    }
+
+    function toggleSelectAll() {
+      const checkboxes = document.querySelectorAll('.prestacion-checkbox');
+      const selectAll = document.getElementById('selectAll');
+      checkboxes.forEach(function(cb) {
+        cb.checked = selectAll.checked;
+      });
+    }
+
+    function marcarComoPagadas() {
+      const checkboxes = document.querySelectorAll('.prestacion-checkbox:checked');
+
+      if (checkboxes.length === 0) {
+        alert('Por favor seleccione al menos una prestación para marcar como pagada');
+        return;
+      }
+
+      const filas = Array.from(checkboxes).map(function(cb) {
+        return parseInt(cb.getAttribute('data-fila'));
+      });
+
+      if (!confirm(`¿Desea marcar ${filas.length} prestaciones como pagadas?`)) {
+        return;
+      }
+
+      showLoading(true);
+
+      demoRun()
+        .withSuccessHandler(function(result) {
+          alert(result.mensaje);
+          // Limpiar arrays para forzar recarga completa
+          prestaciones = [];
+          prestacionesFiltradas = [];
+          // Pequeño retraso para asegurar actualización
+          setTimeout(function() {
+            showLoading(false);
+            cargarDatos(); // Recargar datos
+          }, 500);
+        })
+        .withFailureHandler(function(error) {
+          alert('Error al marcar como pagadas: ' + error.message);
+          showLoading(false);
+        })
+        .marcarComoPagadas(filas);
+    }
+
+    function formatearPrecio(precio) {
+      if (!precio) return '$0';
+      return '$' + parseFloat(precio).toLocaleString('es-AR', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      });
+    }
+
+    function showLoading(show) {
+      document.getElementById('loadingContainer').style.display = show ? 'block' : 'none';
+      document.getElementById('tableContainer').style.display = show ? 'none' : 'block';
+    }
+  </script>
+</body>
+</html>
