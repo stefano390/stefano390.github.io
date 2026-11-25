@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   color-scheme: light;
   --background: #f5f2ea;
   --panel: #fffaf0;
@@ -14,8 +14,13 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
+  --grid-cell: 48px;
+  isolation: isolate;
   margin: 0;
-  background: var(--background);
+  background:
+    linear-gradient(90deg, #70534720 1px, transparent 1px) 0 0 / var(--grid-cell) var(--grid-cell) fixed,
+    linear-gradient(#70534720 1px, transparent 1px) 0 0 / var(--grid-cell) var(--grid-cell) fixed,
+    var(--background);
   color: var(--text);
   font: 500 1rem/1.6 var(--body);
 }
@@ -60,8 +65,62 @@ a:focus-visible, button:focus-visible {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   align-items: center;
-  gap: clamp(24px, 5vw, 78px);
-  padding-block: clamp(44px, 6vw, 86px);
+  gap: clamp(16px, 3vw, 48px);
+  min-height: clamp(460px, 49vw, 620px);
+  margin-block: 20px clamp(34px, 5vw, 70px);
+  padding-block: 24px;
+}
+.page-grid-glow {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(90deg, #b23e20b0 1px, transparent 1px),
+    linear-gradient(#b23e20b0 1px, transparent 1px);
+  background-size: var(--grid-cell) var(--grid-cell);
+  opacity: 0;
+  mask-image: radial-gradient(180px circle at var(--grid-x, 50%) var(--grid-y, 50%), #000, transparent);
+  transition: opacity 420ms ease-out;
+}
+.page-grid-glow.is-lit { opacity: 1; transition-duration: 100ms; }
+.hero-stack h2 {
+  margin-bottom: 14px;
+  color: var(--muted);
+  font: 700 .8rem/1.4 ui-monospace, Consolas, monospace;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tech-grid li {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  min-height: 83px;
+  padding: 8px 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  font: 600 .75rem/1.2 var(--display);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.tech-grid img {
+  object-fit: contain;
+}
+@media (hover: hover) {
+  .tech-grid li:hover {
+    border-color: var(--accent);
+    background: var(--panel);
+  }
 }
 .project-kind {
   font: 700 .75rem/1.5 var(--display);
@@ -94,57 +153,6 @@ a:focus-visible, button:focus-visible {
   gap: 12px 20px;
   margin-top: 25px;
 }
-.terminal-shortcut {
-  font: 600 .84rem var(--display);
-}
-.terminal-shortcut span:first-child { color: var(--accent); }
-
-.hero-art {
-  position: relative;
-  isolation: isolate;
-  display: grid;
-  place-items: center;
-  aspect-ratio: 1.2;
-  overflow: hidden;
-  border-radius: 4px 4px 90px 4px;
-  background:
-    radial-gradient(ellipse at 52% 48%, #632d32, transparent 68%),
-    radial-gradient(circle, #e9a69344 1px, transparent 1.5px) 0 0 / 19px 19px,
-    #21171c;
-  color: #ffd5b8;
-}
-.monogram {
-  font: 700 clamp(4rem, 12vw, 10rem)/1 var(--display);
-  letter-spacing: -.11em;
-  transform: rotate(-9deg);
-}
-.monogram span { color: #ff907f; }
-.sculpture {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  cursor: grab;
-  touch-action: pan-y pinch-zoom;
-}
-.sculpture:active { cursor: grabbing; }
-.sculpture-control {
-  position: absolute;
-  left: 14px;
-  bottom: 14px;
-  min-height: 44px;
-  padding: 0 14px;
-  border: 1px solid #ffc6ac65;
-  border-radius: 100px;
-  background: #21171c;
-  color: #ffe0cb;
-  font: 700 .75rem var(--display);
-  cursor: pointer;
-}
-.sculpture-control span:first-child { margin-right: 4px; font-size: 1rem; }
-.sculpture-control:hover { background: #58303a; }
-.sculpture-control:focus-visible { outline-color: #ffe0cb; }
-
 .work { padding-bottom: clamp(52px, 8vw, 110px); }
 .section-head {
   display: flex;
@@ -259,21 +267,6 @@ a:focus-visible, button:focus-visible {
 .project-dental { background: #e1e8df; }
 .project-unalome { background: #e9dde2; }
 
-.terminal-section { padding-bottom: clamp(64px, 9vw, 125px); }
-.terminal-heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px 24px;
-  border-top: 1px solid var(--line);
-  padding-block: 23px 25px;
-}
-.terminal-heading h2 {
-  font: 700 clamp(1.9rem, 4.8vw, 3.9rem)/1.12 var(--display);
-  letter-spacing: -.065em;
-}
-.terminal-heading p { color: var(--muted); }
 .terminal-window {
   color-scheme: dark;
   --background: #100d11;
@@ -306,42 +299,6 @@ a:focus-visible, button:focus-visible {
 .terminal-lights i { width: 8px; height: 8px; border-radius: 50%; background: #de8c82; }
 .terminal-lights i:nth-child(2) { background: #edcb87; }
 .terminal-lights i:nth-child(3) { background: var(--accent); }
-.terminal-output {
-  position: relative;
-  min-height: 160px;
-  max-height: 330px;
-  overflow: auto;
-  overflow-wrap: anywhere;
-  padding: 22px clamp(14px, 4vw, 36px);
-  font-size: .9rem;
-}
-.terminal-output:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-.terminal-output > div { margin-block: 0 14px; }
-.terminal-output a { color: var(--accent); }
-.terminal-output ol { margin: 3px 0; padding-inline-start: 1.8em; }
-.terminal-echo { color: var(--accent); margin-bottom: 4px; }
-.terminal-form {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-inline: clamp(14px, 4vw, 36px);
-  padding: 6px 6px 6px 12px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  color: var(--accent);
-  background: var(--background);
-}
-.terminal-form:focus-within { border-color: var(--accent); }
-.terminal-form input {
-  flex: 1;
-  min-width: 0;
-  padding: 5px;
-  border: 0;
-  background: transparent;
-  color: var(--text);
-  font: inherit;
-}
-.terminal-form input:focus { outline: none; }
 .terminal-window button, .site-nav a {
   min-height: 44px;
   padding: 0 12px;
@@ -354,21 +311,6 @@ a:focus-visible, button:focus-visible {
   cursor: pointer;
 }
 .terminal-window button:hover, .site-nav a:hover { border-color: var(--accent); color: var(--accent); }
-.terminal-commands {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 14px clamp(14px, 4vw, 36px) 22px;
-}
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  clip-path: inset(50%);
-  overflow: hidden;
-  white-space: nowrap;
-}
-
 .site-footer { background: var(--text); color: var(--background); }
 .footer-links a:hover { color: #ffad8e; }
 .footer-links a:focus-visible { outline-color: var(--background); }
@@ -387,14 +329,49 @@ a:focus-visible, button:focus-visible {
   .shell { width: calc(100% - 48px); }
 }
 @media (max-width: 620px) {
+  body { --grid-cell: 32px; }
   .shell { width: calc(100% - 36px); }
   .site-header .terminal-bar { gap: 10px; }
   .site-nav { flex-basis: 100%; margin-inline-start: 0; }
-  .hero { grid-template-columns: minmax(0, 1fr); gap: 30px; padding-block: 44px 32px; }
-  .hero-art { aspect-ratio: 1.5; border-bottom-right-radius: 46px; }
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    min-height: 0;
+    padding-block: 36px 0;
+  }
+  .hero-stack {
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+  .tech-grid li {
+    min-height: 76px;
+    padding-inline: 5px;
+  }
+  .tech-grid img { width: 26px; height: 26px; }
   .projects, .project-lab { grid-template-columns: 1fr; }
   .lab-art { min-height: 120px; border-left: 0; border-top: 1px solid var(--line); }
 }
+@media (max-width: 350px) {
+  .tech-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tech-grid li {
+    grid-template-columns: 26px minmax(0, 1fr);
+    justify-items: start;
+    min-height: 54px;
+    padding-inline: 9px;
+    text-align: left;
+  }
+}
+@media (max-width: 620px) and (prefers-reduced-motion: no-preference) {
+  .tech-grid img { animation: tech-icon-in 340ms ease-out both; }
+  .tech-grid li:nth-child(4n + 2) img { animation-delay: 40ms; }
+  .tech-grid li:nth-child(4n + 3) img { animation-delay: 80ms; }
+  .tech-grid li:nth-child(4n) img { animation-delay: 120ms; }
+}
+@keyframes tech-icon-in {
+  from { opacity: .35; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .page-grid-glow { display: none; }
 }

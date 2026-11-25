@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -11,11 +11,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="language.js" defer></script>
-  <script src="particle-sculpture.js" defer></script>
+  <script src="hero-grid.js" defer></script>
   <script src="project-filters.js" defer></script>
-  <script src="portfolio-terminal.js" defer></script>
 </head>
 <body>
+  <div class="page-grid-glow" aria-hidden="true"></div>
   <a class="skip" href="#proyectos" data-en="Skip to projects">Saltar a proyectos</a>
   <header class="site-header terminal-window shell">
     <div class="terminal-bar">
@@ -37,16 +37,28 @@
         <p class="intro-copy" data-en="I build websites and management systems.">Desarrollo sitios web y sistemas de gestión.</p>
         <div class="intro-actions">
           <a class="primary" href="#proyectos"><span data-en="Explore work">Ver proyectos</span><span aria-hidden="true">↓</span></a>
-          <a class="terminal-shortcut" href="#terminal" hidden><span aria-hidden="true">&gt;_</span> <span data-en="Open terminal">Abrir terminal</span></a>
         </div>
       </div>
-      <div class="hero-art">
-        <div class="monogram" aria-hidden="true">SM<span>.</span></div>
-        <canvas class="sculpture" aria-hidden="true" hidden></canvas>
-        <button class="sculpture-control" type="button" hidden>
-          <span aria-hidden="true">⟳</span>
-          <span data-en="Rotate monogram">Girar monograma</span>
-        </button>
+      <div class="hero-stack">
+        <h2 data-en="Tech stack">Tecnologías</h2>
+        <ul class="tech-grid" role="list">
+          <li><img src="tech-icons/java.svg" width="30" height="30" alt="">Java</li>
+          <li><img src="tech-icons/javascript.svg" width="30" height="30" alt="">JavaScript</li>
+          <li><img src="tech-icons/sql.svg" width="30" height="30" alt="">SQL</li>
+          <li><img src="tech-icons/html5.svg" width="30" height="30" alt="">HTML5</li>
+          <li><img src="tech-icons/css3.svg" width="30" height="30" alt="">CSS3</li>
+          <li><img src="tech-icons/spring.svg" width="30" height="30" alt="">Spring Boot</li>
+          <li><img src="tech-icons/astro.svg" width="30" height="30" alt="">Astro</li>
+          <li><img src="tech-icons/tailwindcss.svg" width="30" height="30" alt="">Tailwind CSS</li>
+          <li><img src="tech-icons/bootstrap.svg" width="30" height="30" alt="">Bootstrap</li>
+          <li><img src="tech-icons/git.svg" width="30" height="30" alt="">Git</li>
+          <li><img src="tech-icons/github.svg" width="30" height="30" alt="">GitHub</li>
+          <li><img src="tech-icons/vscode.svg" width="30" height="30" alt="">Visual Studio Code</li>
+          <li><img src="tech-icons/intellij.svg" width="30" height="30" alt="">IntelliJ IDEA</li>
+          <li><img src="tech-icons/postman.svg" width="30" height="30" alt="">Postman</li>
+          <li><img src="tech-icons/claude.svg" width="30" height="30" alt="">Claude</li>
+          <li><img src="tech-icons/codex.svg" width="30" height="30" alt="">OpenAI Codex</li>
+        </ul>
       </div>
     </section>
 
@@ -113,33 +125,6 @@
       </div>
     </section>
 
-    <section class="terminal-section shell" id="terminal" aria-labelledby="terminal-title" hidden>
-      <div class="terminal-heading">
-        <h2 id="terminal-title" data-en="Project terminal">Terminal de proyectos</h2>
-        <p data-en="Use commands to browse the same projects from the terminal.">Explorá mis proyectos con comandos.</p>
-      </div>
-      <div class="terminal-window">
-        <div class="terminal-bar">
-          <div class="terminal-lights" aria-hidden="true"><i></i><i></i><i></i></div>
-          <span>stefano390 / portfolio</span>
-        </div>
-        <div class="terminal-output" id="terminal-output" role="log" aria-live="polite" aria-labelledby="terminal-title" tabindex="0">
-          <p data-en="Type help or choose one of the commands below.">Escribí help o probá uno de los comandos de abajo.</p>
-        </div>
-        <form class="terminal-form" autocomplete="off">
-          <label for="terminal-command" class="visually-hidden" data-en="Terminal command">Comando de terminal</label>
-          <span aria-hidden="true">$</span>
-          <input id="terminal-command" type="text" autocapitalize="off" spellcheck="false" enterkeyhint="go">
-          <button type="submit" data-en="Run">Ejecutar</button>
-        </form>
-        <div class="terminal-commands">
-          <button type="button" data-command="projects">projects</button>
-          <button type="button" data-command="project 1">project 1</button>
-          <button type="button" data-command="help">help</button>
-          <button type="button" data-command="clear">clear</button>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer class="site-footer" id="contacto">
