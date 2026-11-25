@@ -17,20 +17,23 @@
 </head>
 <body>
   <a class="skip" href="#proyectos" data-en="Skip to projects">Saltar a proyectos</a>
-  <header class="site-header shell">
-    <a class="signature" href="./">Stefano Mejias<span>.</span></a>
-    <nav>
-      <a href="#proyectos" data-en="Work">Proyectos</a>
-      <a href="#contacto" data-en="Contact">Contacto</a>
-      <button class="language" type="button" hidden lang="en" aria-label="Switch to English">EN</button>
-    </nav>
+  <header class="site-header terminal-window shell">
+    <div class="terminal-bar">
+      <div class="terminal-lights" aria-hidden="true"><i></i><i></i><i></i></div>
+      <a class="signature" href="./">Stefano Mejias<span>.</span></a>
+      <nav class="site-nav">
+        <a href="#proyectos" data-en="Projects">Proyectos</a>
+        <a href="#contacto" data-en="Contact">Contacto</a>
+        <button class="language" type="button" hidden lang="en" aria-label="Switch to English">EN</button>
+      </nav>
+    </div>
   </header>
 
   <main>
     <section class="hero shell" aria-labelledby="titulo">
       <div class="intro">
-        <p class="role" data-en="Software developer">Desarrollador de software</p>
-        <h1 id="titulo">Stefano<br>Mejias<span>.</span></h1>
+        <h1 id="titulo"><span data-en="Software">Desarrollador</span><br>
+          <span data-en="developer">de software</span><span class="title-period" aria-hidden="true">.</span></h1>
         <p class="intro-copy" data-en="I build websites and management systems.">Desarrollo sitios web y sistemas de gestión.</p>
         <div class="intro-actions">
           <a class="primary" href="#proyectos"><span data-en="Explore work">Ver proyectos</span><span aria-hidden="true">↓</span></a>
