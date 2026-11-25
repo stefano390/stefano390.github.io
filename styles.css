@@ -153,7 +153,63 @@ a:focus-visible, button:focus-visible {
   gap: 12px 20px;
   margin-top: 25px;
 }
-.work { padding-bottom: clamp(52px, 8vw, 110px); }
+.work, .education { padding-bottom: clamp(52px, 8vw, 110px); }
+.education-list {
+  margin: 0;
+  padding: 0 clamp(18px, 3vw, 36px);
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+}
+.education-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 16ch;
+  align-items: center;
+  gap: 12px 28px;
+  padding-block: 22px;
+}
+.education-list li + li { border-top: 1px solid var(--line); }
+.education-list h3 {
+  max-width: 52ch;
+  font: 600 clamp(1.1rem, 2vw, 1.45rem)/1.35 var(--display);
+}
+.education-period {
+  margin-top: 4px;
+  color: var(--muted);
+  font: 500 .85rem/1.5 ui-monospace, Consolas, monospace;
+}
+.education-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent);
+  font: 600 .83rem/1.5 ui-monospace, Consolas, monospace;
+}
+.education-progress {
+  display: grid;
+  justify-self: start;
+  gap: 6px;
+  padding: 8px 12px 10px;
+  border: 1px solid #dfbdac;
+  border-radius: 6px;
+  background: #f6e8dc;
+  min-height: 44px;
+  text-align: start;
+}
+.activity-bar {
+  height: 5px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, transparent, currentColor, transparent) 50% / 55% 100% no-repeat, #dfbdac;
+  mask-image: repeating-linear-gradient(90deg, black 0 5px, transparent 5px 7px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .activity-bar { animation: education-activity 2.4s ease-in-out infinite alternate; }
+}
+@keyframes education-activity {
+  from { background-position: left; }
+  to { background-position: right; }
+}
 .section-head {
   display: flex;
   justify-content: space-between;
@@ -218,6 +274,11 @@ a:focus-visible, button:focus-visible {
   overflow-wrap: anywhere;
 }
 .project-copy { margin-top: 12px; max-width: 37ch; color: var(--muted); }
+.project-credit {
+  margin-top: 16px;
+  color: var(--muted);
+  font: 500 .8rem/1.5 ui-monospace, Consolas, monospace;
+}
 .technologies { margin-top: 12px; color: var(--muted); font: 500 .8rem/1.5 var(--display); }
 .project-link {
   display: inline-flex;
@@ -349,6 +410,7 @@ a:focus-visible, button:focus-visible {
   }
   .tech-grid img { width: 26px; height: 26px; }
   .projects, .project-lab { grid-template-columns: 1fr; }
+  .education-list li { grid-template-columns: 1fr; }
   .lab-art { min-height: 120px; border-left: 0; border-top: 1px solid var(--line); }
 }
 @media (max-width: 350px) {

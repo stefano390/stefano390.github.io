@@ -25,9 +25,10 @@ El inventario refleja el contenido de `index.html`. Antes de publicar el redise�
 | --- | --- | --- |
 | Trofeos Gladiador | Sitio de un negocio de trofeos, copas, medallas y grabados | [Ver sitio](https://trofeosgladiador.com/) |
 | Moto Rental Mendoza | Web de alquiler de motos, con una presentación de la flota y contacto para reservas | [Ver sitio](https://rentalmotosmendoza.com/) |
-| Sistema odontológico | Gestión de prestaciones y aranceles para un consultorio con Google Sheets y Apps Script | Proyecto privado |
+| Sistema odontológico | Gestión de prestaciones, profesionales, pagos y reportes con Google Sheets y Apps Script | [Demo con datos ficticios en memoria](../../vistas/odontologia/index.html) |
 | Laboratorio Bellandi & Barreras | Web institucional y catálogo de productos con formularios de contacto | [Ver sitio](https://www.lbybsrl.com/) |
 | Unalome Trading | Tienda estática de frutos secos, identificada como el primer sitio publicado de Stefano | [Ver sitio](https://unalometrading.com/) |
+| Movimientos Casina | Panel de caja y registro de reservas, cobros y gastos con datos ficticios en memoria | [Probar la demo](../../vistas/casina/index.html) · [Capturas](../../vistas/casina.html) |
 
 ## Cómo sumar un proyecto
 

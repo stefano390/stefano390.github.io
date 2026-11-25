@@ -1,0 +1,40 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>La Casina · Portfolio</title>
+  <link rel="stylesheet" href="casina.css">
+  <script defer src="../language.js"></script>
+</head>
+<body>
+  <header>
+    <a href="../index.html#proyectos">← <span data-en="Back to projects">Volver a proyectos</span></a>
+    <button class="language" type="button" hidden lang="en" aria-label="Switch to English">EN</button>
+  </header>
+  <main>
+    <h1>Movimientos Casina</h1>
+    <p data-en="Screenshots of the app with fictional transactions. Open an image to see it at full size.">Capturas de la aplicación con movimientos ficticios. Abrí una imagen para verla en tamaño completo.</p>
+    <section>
+      <h2 data-en="Cash dashboard">Panel de caja</h2>
+      <a class="capture" href="casina-panel.png">
+        <picture><source media="(max-width: 600px)" srcset="casina-panel-movil.png"><img src="casina-panel.png" alt="La Casina · Resumen de caja, gráfico mensual e historial" width="1440"></picture>
+      </a>
+    </section>
+    <section>
+      <h2 data-en="Expense entry">Registro de un gasto</h2>
+      <a class="capture" href="casina-gasto.png">
+        <picture><source media="(max-width: 600px)" srcset="casina-gasto-movil.png"><img src="casina-gasto.png" alt="La Casina · Formulario de nuevo gasto" width="1440" loading="lazy"></picture>
+      </a>
+    </section>
+  </main>
+  <script>
+    for (const link of document.querySelectorAll(".capture")) {
+      const image = link.querySelector("img");
+      const syncLink = () => { if (image.currentSrc) link.href = image.currentSrc; };
+      image.addEventListener("load", syncLink);
+      syncLink();
+    }
+  </script>
+</body>
+</html>
