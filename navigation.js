@@ -24,6 +24,12 @@ siteNav.addEventListener("click", event => {
   navButton.setAttribute("aria-expanded", "false");
 });
 
+document.addEventListener("click", event => {
+  if (navButton.getAttribute("aria-expanded") === "true" && !event.target.closest(".site-header")) {
+    navButton.setAttribute("aria-expanded", "false");
+  }
+});
+
 document.addEventListener("keydown", event => {
   if (event.key === "Escape" && navButton.getAttribute("aria-expanded") === "true") {
     navButton.setAttribute("aria-expanded", "false");
