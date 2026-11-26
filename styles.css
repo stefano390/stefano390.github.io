@@ -274,11 +274,6 @@ a:focus-visible, button:focus-visible {
   overflow-wrap: anywhere;
 }
 .project-copy { margin-top: 12px; max-width: 37ch; color: var(--muted); }
-.project-credit {
-  margin-top: 16px;
-  color: var(--muted);
-  font: 500 .8rem/1.5 ui-monospace, Consolas, monospace;
-}
 .technologies { margin-top: 12px; color: var(--muted); font: 500 .8rem/1.5 var(--display); }
 .project-link {
   display: inline-flex;
