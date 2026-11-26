@@ -60,6 +60,9 @@ a:focus-visible, button:focus-visible {
   margin-inline-start: auto;
 }
 .site-nav a { display: inline-flex; align-items: center; text-decoration: none; }
+.nav-toggle { margin-inline-start: auto; }
+.nav-toggle::after { content: ""; display: inline-block; width: .4em; height: .4em; margin: 0 0 .2em .65em; border: solid currentColor; border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); }
+.nav-toggle[aria-expanded="true"]::after { transform: rotate(225deg); margin-bottom: 0; }
 
 .hero {
   display: grid;
@@ -384,11 +387,22 @@ a:focus-visible, button:focus-visible {
 @media (max-width: 800px) {
   .shell { width: calc(100% - 48px); }
 }
+@media (max-width: 740px) {
+  .site-header .terminal-bar { gap: 8px; padding: 6px 12px; }
+  .site-nav {
+    flex-basis: 100%;
+    display: grid;
+    gap: 4px;
+    padding-block: 6px;
+    border-top: 1px solid var(--line);
+  }
+  .site-nav a { border-color: transparent; }
+  .site-nav .language { justify-self: start; min-width: 44px; }
+  .nav-toggle:not([hidden])[aria-expanded="false"] + .site-nav { display: none; }
+}
 @media (max-width: 620px) {
   body { --grid-cell: 32px; }
   .shell { width: calc(100% - 36px); }
-  .site-header .terminal-bar { gap: 10px; }
-  .site-nav { flex-basis: 100%; margin-inline-start: 0; }
   .hero {
     grid-template-columns: minmax(0, 1fr);
     gap: 28px;
